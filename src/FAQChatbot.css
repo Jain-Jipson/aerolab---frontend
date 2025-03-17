@@ -1,0 +1,163 @@
+html {
+  background: rgb(48, 46, 46);
+  width: 100vw;
+  height: 100vh;
+}
+
+.faq-container {
+  max-width: 90vw;
+  margin: 10vh auto;
+  padding: 20px;
+  background: rgb(48, 46, 46);
+  border-radius: 10px;
+  border: 2px solid;
+  border-color: #fffdfd;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  text-align: center;
+  height: 75vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.faq-title {
+  color: #fffdfd;
+  font-size: 6vh;
+  margin-bottom: 15px;
+}
+
+.faq-input {
+  width: 85vw;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  font-size: 24px;
+  margin-bottom: 15px;
+  position: relative;
+  bottom: -5vh;
+}
+
+.faq-buttons {
+  display: flex;
+  justify-content: space-around;
+  margin-bottom: 15px;
+  position: relative;
+  bottom: -5vh;
+}
+
+.faq-button {
+  padding: 10px 15px;
+  border: none;
+  border-radius: 5px;
+  background-color: #007bff;
+  color: white;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+
+.faq-button:hover {
+  background-color: #0056b3;
+}
+
+.faq-voice {
+  background-color: #28a745;
+}
+
+.faq-voice:hover {
+  background-color: #218838;
+}
+
+.faq-loading {
+  font-style: italic;
+  color: #666;
+}
+
+.faq-history {
+  flex-grow: 1;
+  height: 40vh;
+  overflow-y: auto;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  margin-bottom: 15px;
+  background: #262729;
+  display: flex;
+  flex-direction: column;
+}
+
+.faq-history-item {
+  display: flex;
+  flex-direction: column;
+  padding: 10px;
+  border-bottom: 1px solid #ccc;
+}
+
+.faq-question {
+  font-weight: bold;
+  font-size: 18px;
+  color: #007bff;
+  align-self: flex-start;
+  background: #1e1f21;
+  padding: 10px;
+  border-radius: 10px;
+  max-width: 70%;
+}
+
+.faq-answer {
+  margin-top: 5px;
+  align-self: flex-end;
+  background: #28292b;
+  color: white;
+  padding: 10px;
+  border-radius: 10px;
+  max-width: 70%;
+}
+
+.faq-back {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px 10px;
+  background: #dc3545;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background 0.3s;
+  position: absolute;
+  top: 3vh;
+  left: 3vh;
+  width: 6vw;
+  height: 6vh;
+  font-size: 2vw;
+}
+
+.faq-back:hover {
+  background: #c82333;
+}
+
+.faq-toggle {
+  position: relative;
+  color: #fffdfd;
+}
+
+.faq-welcome-message {
+  text-align: center;
+  font-size: 24px;
+  font-weight: bold;
+  color: #fefeff;
+  text-transform: uppercase;
+  margin-bottom: 15px;
+  animation: fadeIn 1.5s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

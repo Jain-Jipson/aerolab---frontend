@@ -1,0 +1,43 @@
+.mira-screen {
+    position: fixed;
+    width: 100vw;
+    height: 100vh;
+    background: #111;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .mira-image {
+    width: 50%;
+    max-width: 400px;
+  }
+  
+  .mira-text {
+    color: white;
+    font-size: 2em;
+    text-align: center;
+  }
+  
+  .sidebar {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: rgba(0, 0, 0, 0.8);
+    padding: 10px;
+    border-radius: 5px;
+  }
+  
+  .sidebar a {
+    display: block;
+    color: white;
+    padding: 10px;
+    text-decoration: none;
+  }
+  
+  .sidebar a:hover {
+    background: gray;
+  }
+  

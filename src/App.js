@@ -25,7 +25,7 @@ function Login({ setIsAuthenticated }) {
 
   return (
     <div>
-      <h2>Admin Login</h2>
+      <h2 style={{ color: 'white' }}>Admin Login</h2>
       <input type="text" placeholder="Username" onChange={(e) => setUsername(e.target.value)} />
       <input type="password" placeholder="Password" onChange={(e) => setPassword(e.target.value)} />
       <button onClick={handleLogin}>Login</button>
@@ -45,7 +45,7 @@ function Home() {
 }
 
 // ✅ OpenAI API Keys (Replace with actual API keys)
-const OPENAI_API_KEY = "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";
+const OPENAI_API_KEY = "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";
 
 // ✅ Function to handle speech recognition (STT - Whisper API)
 const recordAudio = async () => {
@@ -64,6 +64,7 @@ const recordAudio = async () => {
         const formData = new FormData();
         formData.append("file", audioBlob, "speech.wav");
         formData.append("model", "whisper-1");
+        formData.append("language", "en");
 
         const response = await fetch("https://api.openai.com/v1/audio/transcriptions", {
           method: "POST",
@@ -72,6 +73,7 @@ const recordAudio = async () => {
         });
 
         const data = await response.json();
+        let cleanText = data.text.replace(/[^a-zA-Z0-9\s]/g, "");
         resolve(data.text);
       };
 
@@ -114,11 +116,12 @@ const playAudioResponse = async (text) => {
 
 // ✅ FAQChatbot Component with Voice Support
 function FAQChatbot() {
+  const [wakeWordDetected, setWakeWordDetected] = useState(false);
   const [question, setQuestion] = useState("");
   const [history, setHistory] = useState([]); // Stores Q&A history
   const [loading, setLoading] = useState(false);
   const [fullSpeech, setFullSpeech] = useState(true); // Toggle for full/partial speech
-  const [welcomeMessage, setWelcomeMessage] = useState("WELCOME TO AEROLAB, HOW CAN I ASSIST YOU TODAY?");
+  const [welcomeMessage] = useState("WELCOME TO AEROLAB, HOW CAN I ASSIST YOU TODAY?");
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -134,7 +137,7 @@ function FAQChatbot() {
     return () => {
       sessionStorage.removeItem("hasVisitedMira"); // ✅ Reset when leaving the page
     };
-  }, []);
+  }, [welcomeMessage]);
 
   useEffect(() => {
     const inactivityTimer = setTimeout(() => {
@@ -153,7 +156,7 @@ function FAQChatbot() {
       window.removeEventListener("mousemove", resetTimer);
       window.removeEventListener("keydown", resetTimer);
     };
-  }, []);
+  }, [navigate]);
   
   const askQuestion = async () => {
     if (!question.trim()) return; // Prevent empty submissions
@@ -178,13 +181,107 @@ function FAQChatbot() {
   };
 
   const handleVoiceQuery = async () => {
+    console.log("Listening for wake word...");
+    
+    const wakeWordDetected = await listenForWakeWord(); // Function to detect wake word
+    if (!wakeWordDetected) return;
+
+    console.log("Wake word detected. Recording voice query...");
     const spokenQuestion = await recordAudio();
-    setQuestion(spokenQuestion);
-    askQuestion();
-  };
+    
+    if (spokenQuestion.trim()) {
+        setQuestion(spokenQuestion); // ✅ Updates the input field
+    }
+};
+
+// ✅ Automatically submit when `question` is updated
+useEffect(() => {
+  if (!question.trim()) return; // Prevent empty submissions
+
+  const delay = setTimeout(() => {
+      askQuestion();
+  }, 1500); // Waits 800ms after the user stops typing
+
+  return () => clearTimeout(delay); // Clears timeout if user types again
+}, [question]);
+
+const listenForWakeWord = async () => {
+  return new Promise((resolve) => {
+    const wakeWord = ["hey mira", "hi mira"];
+    const recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
+    
+    recognition.continuous = true;
+    recognition.lang = "en-US"; // ✅ Ensures only English is detected
+
+    recognition.onresult = async (event) => {
+      let transcript = event.results[event.results.length - 1][0].transcript.toLowerCase();
+      
+      // ✅ Remove any non-English characters
+      transcript = transcript.replace(/[^a-zA-Z0-9\s]/g, "");
+
+      console.log("Detected speech:", transcript);
+
+      if (wakeWord.some((word) => transcript.includes(word))) {
+        recognition.stop();
+        resolve(true);
+      }
+    };
+
+    recognition.onerror = () => resolve(false);
+    recognition.start();
+  });
+};
+
+  useEffect(() => {
+    let recognition;
+    
+    const startListening = () => {
+      recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
+      recognition.continuous = true;
+      recognition.lang = "en-US";
+  
+      recognition.onresult = async (event) => {
+        const transcript = event.results[event.results.length - 1][0].transcript.toLowerCase();
+        console.log("Detected speech:", transcript);
+  
+        if (transcript.includes("hey mira") || transcript.includes("hi mira") || transcript.includes("mera") || transcript.includes("mirror") || transcript.includes("gvjh")) {
+          console.log("Wake word detected! Recording voice query...");
+          setWakeWordDetected(true);
+          recognition.stop(); // Stop wake word detection while recording
+  
+          const spokenQuestion = await recordAudio();
+          if (spokenQuestion.trim()) {
+            setQuestion(spokenQuestion);
+            await askQuestion(); // ✅ Auto-submit question and get an answer
+            setWakeWordDetected(false);
+          }
+          setWakeWordDetected(false);
+          startListening(); // Restart wake word detection
+
+        }
+      };
+  
+      recognition.onerror = (event) => {
+        console.error("Speech recognition error:", event.error);
+        startListening(); // Restart listening on error
+      };
+  
+      recognition.start();
+    };
+  
+    startListening(); // Start listening when the page loads
+  
+    return () => {
+      if (recognition) {
+        recognition.stop(); // Stop listening when leaving the page
+      }
+    };
+  }, []);
+  
+  
 
   return (
-    <div className="faq-container">
+    <div className={`faq-container ${wakeWordDetected ? "listening-border" : ""}`}>
       <h2 className="faq-title">Ask Mira</h2>
       <div className="faq-welcome-message">
         <h3>{welcomeMessage}</h3>
@@ -247,7 +344,7 @@ function EmployeeList() {
 
   return (
     <div>
-      <h2>Employees</h2>
+      <h2 style={{ color: 'white' }}>Employee List</h2>
       <ul>
         {employees.map((employee) => (
           <li key={employee.id}>
@@ -374,7 +471,7 @@ function AddEmployee() {
 
   return (
     <div>
-      <h2>Add Employee</h2>
+      <h2 style={{ color: 'white' }}>Add Employee</h2>
       <input type="text" placeholder="Name" onChange={(e) => setNewEmployee({ ...newEmployee, name: e.target.value })} />
       <input type="text" placeholder="Role" onChange={(e) => setNewEmployee({ ...newEmployee, role: e.target.value })} />
       <input type="text" placeholder="RFID" onChange={(e) => setNewEmployee({ ...newEmployee, rfid: e.target.value })} />

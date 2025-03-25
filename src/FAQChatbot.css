@@ -161,3 +161,22 @@ html {
     transform: translateY(0);
   }
 }
+
+.listening-border {
+  border: 3px solid blue;
+  border-radius: 10px;
+  transition: border 0.3s ease-in-out;
+  animation: glowing-border 3s ease-in-out;
+}
+
+@keyframes glowing-border {
+  0% {
+    box-shadow: 0 0 5px rgba(0, 0, 255, 0.5);
+  }
+  50% {
+    box-shadow: 0 0 15px rgba(0, 0, 255, 0.8);
+  }
+  100% {
+    box-shadow: 0 0 5px rgba(0, 0, 255, 0.5);
+  }
+}

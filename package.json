@@ -21,12 +21,26 @@
     "socket.io-client": "^4.8.1",
     "web-vitals": "^2.1.4"
   },
-  "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build",
-    "test": "react-scripts test",
-    "eject": "react-scripts eject"
-  },
+  "main": "public/electron.js",
+"scripts": {
+  "start": "react-scripts start",
+  "build": "react-scripts build",
+  "electron": "electron public/electron.js",
+  "electron-build": "electron-builder"
+},
+"build": {
+  "files": [
+    "build/**/*"
+  ],
+  "appId": "com.example.myapp",
+  "productName": "Mira",
+  "win": {
+    "target": "nsis",
+    "icon": "assets/icon.ico"
+  }
+}
+
+,
   "eslintConfig": {
     "extends": [
       "react-app",
@@ -44,5 +58,9 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "devDependencies": {
+    "electron": "^35.0.2",
+    "electron-builder": "^25.1.8"
   }
 }
